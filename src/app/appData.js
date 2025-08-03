@@ -20,3 +20,12 @@ export const coworkerGifs = {
   diego: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDJqY21zaG0xZjE2MTg3bXc2dW0zMWhnZmgxZjJzNDVtYzQxczUwMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qRSpApikiELcwHuwcz/giphy.gif",
   isabelly: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZzMyeGVjemY4NTA5NDQ2YXNhZmVvNnp6OWF6dTl2MzVmZDhiczRleSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iH2IldVkqeLuJ7eJ0L/giphy.gif"
 };
+
+export const husband = ['coisinha', 'rubim', 'rubinho', 'runicstrike'];
+
+export const husbandGifs = {
+  'coisinha': 'https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExaTRocDVkbTk5Z2k3MDMyZ2YyOXJpNGdya2sxb2Z6cmxwcG54ZXI0biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/5p8jOW3f00osS705g3/giphy.gif',
+  'rubim': 'https://media2.giphy.com/media/v1.Y2lkPTc5MGI3NjExMTRzMWNteDQ3MTNhdm42OWh0YnU5cTQ5OGttdnRyZGZ0cTJva212ZCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/uzBlxdCuHIJzewPGs6/giphy.gif',
+  'rubinho': 'https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExZWZhOGwzMXV6dDFiaHEyNnYxNmZ1YnNnem52d2V5cmk1bXc5dmRmdCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/G6NT3RHJt5FiF7Nd3I/giphy.gif',
+  'runicstrike': 'https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExdWFlMDQwaWh0M3I4N3RibDZleHhpaml5NDFrMmtiNDU5YmMyanVzayZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/7zVRvwq2FCFyadamjl/giphy.gif',
+};

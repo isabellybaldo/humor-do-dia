@@ -2,9 +2,8 @@
 import { useState, useEffect } from "react";
 import styles from "./page.module.css";
 import Confetti from "react-confetti";
-import { emojiMap, coworkers, coworkerGifs } from "./appData";
+import { emojiMap, coworkers, coworkerGifs, husband, husbandGifs } from "./appData";
 import ResultsBox from "./resultsBox";
-
 
 
 // Functions for handling coworker logic and emojis
@@ -15,6 +14,11 @@ function isCoworker(name) {
 function getRandomEmoji(note) {
   const emojis = emojiMap[note] || [];
   return emojis.length > 0 ? emojis[Math.floor(Math.random() * emojis.length)] : "";
+}
+
+// Husband logic
+function isHeartPerson(name) {
+  return husband.includes(name.trim().toLowerCase());
 }
 
 // Actual main component
@@ -42,6 +46,10 @@ export default function Home() {
   const isSpecial = isCoworker(name);
   const lowerName = name.trim().toLowerCase();
   const gif = coworkerGifs[lowerName];
+
+  // Husband logic
+  const showHearts = isHeartPerson(name);
+  const husbandGif = husbandGifs[lowerName];
 
   return (
       <div
@@ -75,6 +83,20 @@ export default function Home() {
               />
             </div>
           )}
+        {showHearts && (
+          <div style={{ marginTop: 8 }}>
+            <div style={{ fontSize: "2rem" }}>
+              {'❤️ '.repeat(5)}
+            </div>
+            {husbandGif && (
+              <img
+                src={husbandGif}
+                alt="Husband Special"
+                style={{ maxWidth: "200px", width: "100%", height: "auto", objectFit: "cover", borderRadius: 8, marginTop: 8 }}
+              />
+            )}
+          </div>
+        )}
         </div>
         <div className={styles.box}>
           <label>Como está seu humor hoje?:</label>
