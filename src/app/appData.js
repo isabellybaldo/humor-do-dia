@@ -11,7 +11,7 @@ export const emojiMap = {
   10: ["😍", "🤗", "😇", "😽", "😃", "🎉", "🔥", "💯", "🏆", "🥇", "ヽ(•‿•)ノ", "＼(＾▽＾)／", "(ﾉ◕ヮ◕)ﾉ*:･ﾟ✧"]
 };
 
-export const coworkers = ["gustavo", "filipe", "pedro", "diego", "isabelly"];
+export const coworkers = ["gustavo", "filipe", "pedro", "diego", "isabelly", "monica", "carlos"];
 
 export const coworkerGifs = {
   gustavo: "https://media3.giphy.com/media/v1.Y2lkPTc5MGI3NjExM3dxN2hwcnVsdWNoMGEzc3pueGpoZnVvdXRycW5rdXhiaXJvZ2V4biZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/J5AhhrPHSpDdHB55vF/giphy.gif",
