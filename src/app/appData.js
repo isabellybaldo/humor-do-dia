@@ -18,7 +18,9 @@ export const coworkerGifs = {
   filipe: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExM2N6N3kzdW9xdWhwcWVndW9ob2h5djhmeTBrNTM5OGhlb3h4NXh5aiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/WRQBXSCnEFJIuxktnw/giphy.gif",
   pedro: "https://media.giphy.com/media/26ufdipQqU2lhNA4g/giphy.gif",
   diego: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExMDJqY21zaG0xZjE2MTg3bXc2dW0zMWhnZmgxZjJzNDVtYzQxczUwMiZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/qRSpApikiELcwHuwcz/giphy.gif",
-  isabelly: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZzMyeGVjemY4NTA5NDQ2YXNhZmVvNnp6OWF6dTl2MzVmZDhiczRleSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iH2IldVkqeLuJ7eJ0L/giphy.gif"
+  isabelly: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExZzMyeGVjemY4NTA5NDQ2YXNhZmVvNnp6OWF6dTl2MzVmZDhiczRleSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/iH2IldVkqeLuJ7eJ0L/giphy.gif",
+  monica: "https://media1.giphy.com/media/v1.Y2lkPTc5MGI3NjExcDExbml4anNjdW10MTZtMjZ4c2d5Y2xkcHAzdXZheXhid2ZtaXg2eCZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/JIX9t2j0ZTN9S/giphy.gif",
+  carlos: "https://media0.giphy.com/media/v1.Y2lkPTc5MGI3NjExODQyOW1zZ3BiMzJvcDNjY3dmaGxjenFtZ2I0b3Fuc3VrcDhoZzRhaSZlcD12MV9pbnRlcm5hbF9naWZfYnlfaWQmY3Q9Zw/xonOzxf2M8hNu/giphy.gif"
 };
 
 export const husband = ['coisinha', 'rubim', 'rubinho', 'runicstrike'];
