@@ -18,6 +18,7 @@ beforeAll(async () => {
 });
 afterAll(async () => {
   await prisma.moodEntry.deleteMany({ where: { person: { name: 'ana' } } });
+  await prisma.person.deleteMany({ where: { name: 'ana' } });
 });
 
 describe('/api/stats', () => {

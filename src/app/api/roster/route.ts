@@ -45,6 +45,9 @@ export async function DELETE(request: Request) {
   }
   const b = await request.json().catch(() => ({}));
   const name = normalizeName(String(b.name ?? ''));
+  if (!name) return NextResponse.json({ error: 'name required' }, { status: 422 });
+  const existing = await prisma.person.findUnique({ where: { name } });
+  if (!existing) return NextResponse.json({ error: 'not found' }, { status: 404 });
   await prisma.person.update({ where: { name }, data: { isActive: false } });
   return NextResponse.json({ ok: true });
 }
