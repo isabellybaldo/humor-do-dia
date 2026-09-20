@@ -4,6 +4,19 @@ import { fileURLToPath } from 'node:url';
 
 export default defineConfig({
   plugins: [react()],
+  esbuild: {
+    // Treat .js files as JSX so Vite/esbuild can parse JSX syntax in them
+    loader: 'tsx',
+    include: /src\/.*\.[jt]sx?$/,
+    exclude: [],
+  },
+  optimizeDeps: {
+    esbuildOptions: {
+      loader: {
+        '.js': 'jsx',
+      },
+    },
+  },
   test: {
     environment: 'jsdom',
     globals: true,
