@@ -32,8 +32,8 @@ branch / PR #1).
 - **Traefik** fronts the web container (`humor.isoca.space`, `letsencrypt` resolver).
   Postgres runs on a **separate internal Docker network**, never published to the host or
   the internet; a named volume holds its data.
-- Config via `.env` on the VPS (`DATABASE_URL`, `ADMIN_PASSWORD_HASH`, `SESSION_SECRET`),
-  never committed.
+- Config via `.env` on the VPS (`DATABASE_URL`, `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`,
+  `SESSION_SECRET`), never committed.
 
 ### Units / boundaries
 - `src/lib/db.ts` — Prisma client singleton.
@@ -96,9 +96,13 @@ in the first migration, and thereafter edited via the admin UI.
 **Viewing** (public): today's board on `/`, full dashboard on `/stats`.
 
 **Admin** (`/admin`, login-gated):
-- Login form → `POST /api/auth` checks password against `ADMIN_PASSWORD_HASH` (bcrypt),
-  issues a signed, HTTP-only, `Secure`, `SameSite=Lax` session cookie (JWT via `jose`,
-  ~7-day TTL). Logout clears it.
+- Login form → `POST /api/auth` checks **username + password** against `ADMIN_USERNAME`
+  + `ADMIN_PASSWORD_HASH` (bcrypt), issues a signed, HTTP-only, `Secure`, `SameSite=Lax`
+  session cookie (JWT via `jose`, ~7-day TTL). Logout clears it.
+- **Password-manager friendly**: the login is a real `<form method="post" action="/api/auth">`
+  with a username field (`autocomplete="username"`) and a password field
+  (`type="password"`, `autocomplete="current-password"`), so Chrome/others offer to save
+  and autofill it. A successful non-JS submit still works (progressive enhancement).
 - Roster CRUD: add/edit/deactivate people (name, displayName, isActive, isSweetheart,
   gifUrl). All mutation routes verify the session server-side.
 
