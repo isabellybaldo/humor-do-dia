@@ -1,0 +1,74 @@
+name: Deploy to VPS
+
+on:
+  push:
+    branches: [main]
+    paths-ignore:
+      - 'docs/**'
+      - '**/*.md'
+  workflow_dispatch:
+
+concurrency:
+  group: deploy-humor
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Build & deploy over SSH
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v1.0.3
+        env:
+          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
+          APP_NAME: ${{ secrets.APP_NAME }}
+          DOMAIN: ${{ secrets.DOMAIN }}
+          DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
+          ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
+          ADMIN_PASSWORD_HASH: ${{ secrets.ADMIN_PASSWORD_HASH }}
+          SESSION_SECRET: ${{ secrets.SESSION_SECRET }}
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USERNAME }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_SSH_PORT }}
+          envs: DEPLOY_PATH,APP_NAME,DOMAIN,DB_PASSWORD,ADMIN_USERNAME,ADMIN_PASSWORD_HASH,SESSION_SECRET
+          script: |
+            set -e
+            cd "$DEPLOY_PATH/humor-do-dia"
+
+            # Sync code to the exact pushed commit (local gitignored .env is untouched by reset).
+            git config --global --add safe.directory "$(pwd)" || true
+            git fetch origin main
+            git reset --hard origin/main
+
+            # Rewrite .env with LITERAL secret values. Secrets mirror the working .env
+            # verbatim (incl. the $$-escaped bcrypt hash), so nothing is re-interpolated here.
+            umask 077
+            {
+              printf 'APP_NAME=%s\n' "$APP_NAME"
+              printf 'DOMAIN=%s\n' "$DOMAIN"
+              printf 'DB_PASSWORD=%s\n' "$DB_PASSWORD"
+              printf 'ADMIN_USERNAME=%s\n' "$ADMIN_USERNAME"
+              printf 'ADMIN_PASSWORD_HASH=%s\n' "$ADMIN_PASSWORD_HASH"
+              printf 'SESSION_SECRET=%s\n' "$SESSION_SECRET"
+            } > .env
+
+            # Build + start; entrypoint runs prisma migrate deploy + seed-if-empty.
+            docker compose up -d --build
+            docker compose ps
+
+  verify:
+    name: Health check
+    needs: deploy
+    runs-on: ubuntu-latest
+    steps:
+      - name: Poll /api/health
+        run: |
+          for i in $(seq 1 20); do
+            if curl -fsS "https://${{ secrets.DOMAIN }}/api/health" | grep -q '"status":"ok"'; then
+              echo "healthy ✓"; exit 0
+            fi
+            echo "waiting for app… ($i)"; sleep 6
+          done
+          echo "health check failed"; exit 1
