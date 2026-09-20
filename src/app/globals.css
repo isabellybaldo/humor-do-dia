@@ -1,42 +1,27 @@
+@import '@fontsource/press-start-2p/400.css';
+@import '@fontsource/nunito/400.css';
+@import '@fontsource/nunito/700.css';
+
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --pink:#ffb3c6; --lavender:#cdb4f6; --mint:#b8f2cd; --on-accent:#2b2b3a;
+  --font-pixel:'Press Start 2P',monospace; --font-body:'Nunito',system-ui,sans-serif;
+  --step:4px;
+  --bg:#1e1b2e; --text:#f4eeff; --text-soft:#b8afd6; --card:#2a2640; --border:#f4eeff; --shadow:#100d1c; --dot:rgba(205,180,246,.15);
 }
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-html,
-body {
-  max-width: 100vw;
-  overflow-x: hidden;
-}
-
-body {
-  color: var(--foreground);
-  background: var(--background);
-  font-family: Arial, Helvetica, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-}
-
-* {
-  box-sizing: border-box;
-  padding: 0;
-  margin: 0;
-}
-
-a {
-  color: inherit;
-  text-decoration: none;
-}
-
-@media (prefers-color-scheme: dark) {
-  html {
-    color-scheme: dark;
-  }
-}
+[data-theme='light']{ --bg:#fdf6f0; --text:#2b2b3a; --text-soft:#5b5b6e; --card:#fff; --border:#2b2b3a; --shadow:#2b2b3a; --dot:#cdb4f6; }
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--text);font-family:var(--font-body);font-size:18px;line-height:1.6;
+  background-image:radial-gradient(var(--dot) 1px,transparent 1px);background-size:24px 24px;background-attachment:fixed;}
+h1,h2,h3{font-family:var(--font-pixel);line-height:1.4}
+h1{font-size:20px} h2{font-size:14px} h3{font-size:11px}
+main{max-width:760px;margin:0 auto;padding:40px 18px 80px}
+a{color:var(--text)}
+.pixel-card{background:var(--card);border:var(--step) solid var(--border);box-shadow:calc(var(--step)*2) calc(var(--step)*2) 0 0 var(--shadow);padding:18px;margin-bottom:18px}
+.pixel-btn{font-family:var(--font-pixel);font-size:10px;color:var(--on-accent);background:var(--mint);border:var(--step) solid var(--border);box-shadow:var(--step) var(--step) 0 0 var(--shadow);padding:12px 14px;cursor:pointer;text-decoration:none;display:inline-block;margin:6px 8px 6px 0}
+.pixel-btn:hover{transform:translate(2px,2px);box-shadow:2px 2px 0 0 var(--shadow)}
+.pixel-btn--pink{background:var(--pink)} .pixel-btn--lav{background:var(--lavender)}
+.pixel-input{font-family:var(--font-body);font-size:16px;padding:10px;border:3px solid var(--border);background:var(--bg);color:var(--text);width:100%}
+.tag{font-family:var(--font-pixel);font-size:8px;color:var(--on-accent);background:var(--lavender);border:2px solid var(--border);padding:4px 6px;margin-right:4px;display:inline-block}
+.theme-toggle{position:fixed;top:12px;right:12px;z-index:10;font-size:9px}
+.nav a{margin-right:12px;font-family:var(--font-pixel);font-size:9px}
+a:focus-visible,.pixel-btn:focus-visible,.pixel-input:focus-visible{outline:3px solid var(--lavender);outline-offset:3px}

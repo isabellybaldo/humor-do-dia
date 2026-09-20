@@ -1,27 +1,18 @@
-import { Geist, Geist_Mono } from "next/font/google";
-import "./globals.css";
+import './globals.css';
 
-const geistSans = Geist({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-});
-
-export const metadata = {
-  title: "Humor do Dia",
-  description: "Small app for funny daily stuff",
-};
+export const metadata = { title: 'Humor do Dia', description: 'O humor do dia da turma.' };
 
 export default function RootLayout({ children }) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
-      </body>
+    <html lang="pt-BR" data-theme="dark">
+      <head>
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `(function(){var t=localStorage.getItem('theme')||'dark';document.documentElement.setAttribute('data-theme',t);})();`,
+          }}
+        />
+      </head>
+      <body>{children}</body>
     </html>
   );
 }
