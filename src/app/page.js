@@ -12,8 +12,10 @@ export default function Home() {
   const [savedEmoji, setSavedEmoji] = useState('');
 
   async function loadBoard() {
-    const res = await fetch('/api/entries');
-    setBoard(await res.json());
+    try {
+      const res = await fetch('/api/entries');
+      if (res.ok) setBoard(await res.json());
+    } catch { /* keep last board on transient failure */ }
   }
   useEffect(() => { loadBoard(); }, []);
 

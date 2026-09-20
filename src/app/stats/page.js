@@ -7,8 +7,11 @@ const COLORS = ['#ffb3c6', '#cdb4f6', '#b8f2cd', '#ffd93d', '#8ecae6', '#ff9f9f'
 
 export default function Stats() {
   const [data, setData] = useState(null);
-  useEffect(() => { fetch('/api/stats').then(r => r.json()).then(setData); }, []);
+  useEffect(() => {
+    fetch('/api/stats').then(r => r.json()).then(setData).catch(() => setData({ error: true }));
+  }, []);
   if (!data) return <main><p>Carregando…</p></main>;
+  if (data.error) return <main><p>Não foi possível carregar as stats agora.</p></main>;
 
   const people = Object.keys(data.moodOverTime);
   const dist = Object.entries(data.distribution).map(([mood, count]) => ({ mood, count }));
