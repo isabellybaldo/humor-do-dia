@@ -20,9 +20,6 @@ jobs:
       - name: Deploy via SSH
         uses: appleboy/ssh-action@v1.0.3
         env:
-          DEPLOY_PATH: ${{ secrets.DEPLOY_PATH }}
-          APP_NAME: ${{ secrets.APP_NAME }}
-          DOMAIN: ${{ secrets.DOMAIN }}
           DB_PASSWORD: ${{ secrets.DB_PASSWORD }}
           ADMIN_USERNAME: ${{ secrets.ADMIN_USERNAME }}
           ADMIN_PASSWORD_HASH: ${{ secrets.ADMIN_PASSWORD_HASH }}
@@ -32,22 +29,23 @@ jobs:
           username: ${{ secrets.VPS_USERNAME }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_SSH_PORT }}
-          envs: DEPLOY_PATH,APP_NAME,DOMAIN,DB_PASSWORD,ADMIN_USERNAME,ADMIN_PASSWORD_HASH,SESSION_SECRET
+          envs: DB_PASSWORD,ADMIN_USERNAME,ADMIN_PASSWORD_HASH,SESSION_SECRET
           script: |
             set -e
-            cd "$DEPLOY_PATH/humor-do-dia"
+            cd /home/isoca/projects/humor-do-dia
 
             # Sync code to the exact pushed commit (local gitignored .env is untouched by reset).
-            git config --global --add safe.directory "$(pwd)" || true
+            git config --global --add safe.directory /home/isoca/projects/humor-do-dia || true
             git fetch origin main
             git reset --hard origin/main
 
-            # Rewrite .env with LITERAL secret values. Secrets mirror the working .env
-            # verbatim (incl. the $$-escaped bcrypt hash), so nothing is re-interpolated here.
+            # Rewrite .env with LITERAL values. Non-sensitive config is hardcoded here;
+            # secrets mirror the working .env verbatim (incl. the $$-escaped bcrypt hash),
+            # so nothing is re-interpolated.
             umask 077
             {
-              printf 'APP_NAME=%s\n' "$APP_NAME"
-              printf 'DOMAIN=%s\n' "$DOMAIN"
+              printf 'APP_NAME=%s\n' 'humor-do-dia'
+              printf 'DOMAIN=%s\n' 'humor.isoca.space'
               printf 'DB_PASSWORD=%s\n' "$DB_PASSWORD"
               printf 'ADMIN_USERNAME=%s\n' "$ADMIN_USERNAME"
               printf 'ADMIN_PASSWORD_HASH=%s\n' "$ADMIN_PASSWORD_HASH"
@@ -66,7 +64,7 @@ jobs:
       - name: Poll /api/health
         run: |
           for i in $(seq 1 20); do
-            if curl -fsS "https://${{ secrets.DOMAIN }}/api/health" | grep -q '"status":"ok"'; then
+            if curl -fsS "https://humor.isoca.space/api/health" | grep -q '"status":"ok"'; then
               echo "healthy ✓"; exit 0
             fi
             echo "waiting for app… ($i)"; sleep 6
