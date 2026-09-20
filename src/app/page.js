@@ -1,124 +1,137 @@
-"use client";
-import { useState, useEffect } from "react";
-import styles from "./page.module.css";
-import Confetti from "react-confetti";
-import { emojiMap, coworkers, coworkerGifs, husband, husbandGifs } from "./appData";
-import ResultsBox from "./resultsBox";
+'use client';
+import { useEffect, useState } from 'react';
+import Confetti from 'react-confetti';
+import ThemeToggle from './ThemeToggle';
+import { emojiMap } from './appData';
 
+const MOOD_WORDS = {
+  1: 'péssimo', 2: 'ruim', 3: 'meh', 4: 'baixo', 5: 'ok',
+  6: 'bom', 7: 'ótimo', 8: 'muito bom', 9: 'excelente', 10: 'incrível',
+};
 
-// Functions for handling coworker logic and emojis
-function isCoworker(name) {
-  return coworkers.includes(name.trim().toLowerCase());
+function randomEmoji(level) {
+  const set = emojiMap[level] || emojiMap[5];
+  return set[Math.floor(Math.random() * set.length)];
 }
 
-function getRandomEmoji(note) {
-  const emojis = emojiMap[note] || [];
-  return emojis.length > 0 ? emojis[Math.floor(Math.random() * emojis.length)] : "";
-}
-
-// Husband logic
-function isHeartPerson(name) {
-  return husband.includes(name.trim().toLowerCase());
-}
-
-// Actual main component
 export default function Home() {
-  const [name, setName] = useState("");
-  const [note, setNote] = useState(5);
-  const [desc, setDesc] = useState("");
-  const [emoji, setEmoji] = useState("");
-  const [today, setToday] = useState("");
+  const [name, setName] = useState('');
+  const [mood, setMood] = useState(5);
+  const [note, setNote] = useState('');
+  const [emoji, setEmoji] = useState('');
+  const [board, setBoard] = useState([]);
+  const [error, setError] = useState('');
+  const [saved, setSaved] = useState(false);
 
-  // Effect to initialize emoji and today's date
-  useEffect(() => {
-    setEmoji(getRandomEmoji(5));
-    setToday(new Date().toLocaleDateString("pt-BR"));
-  }, []);
+  useEffect(() => { setEmoji(randomEmoji(5)); }, []);
 
-  // Handler of change to the note input
-  function handleNoteChange(e) {
-    const value = Number(e.target.value);
-    setNote(value);
-    setEmoji(getRandomEmoji(value));
+  async function loadBoard() {
+    try {
+      const res = await fetch('/api/entries');
+      if (res.ok) setBoard(await res.json());
+    } catch { /* keep last board on transient failure */ }
+  }
+  useEffect(() => { loadBoard(); }, []);
+
+  // Tapping a number sets the mood and refreshes the live emoji.
+  // Re-tapping the same number reshuffles the emoji for that level.
+  function selectMood(level) {
+    setMood(level);
+    setEmoji(randomEmoji(level));
+    setSaved(false);
+    setError('');
   }
 
-  // Coworker logic
-  const isSpecial = isCoworker(name);
-  const lowerName = name.trim().toLowerCase();
-  const gif = coworkerGifs[lowerName];
+  async function save(e) {
+    e.preventDefault();
+    setError('');
+    if (!name.trim()) { setError('Escreve teu nome primeiro. 🙂'); return; }
+    const res = await fetch('/api/entries', {
+      method: 'POST', headers: { 'content-type': 'application/json' },
+      body: JSON.stringify({ name, mood: Number(mood), note, emoji }),
+    });
+    if (!res.ok) {
+      const j = await res.json().catch(() => ({}));
+      setError(j.error || 'Erro ao salvar.');
+      return;
+    }
+    setSaved(true);
+    await loadBoard();
+  }
 
-  // Husband logic
-  const showHearts = isHeartPerson(name);
-  const husbandGif = husbandGifs[lowerName];
+  const me = board.find(b => b.person === name.trim().toLowerCase());
 
   return (
-      <div
-        className={styles.page}
-        style={{
-          background: "#181c25", // sempre dark
-          color: "#f4f6f8"
-        }}
-      >
-      {note === 10 && <Confetti />}
-      <main className={styles.main}>
-        <h1>Humor do Dia</h1>
-        <div className={styles.box}>
-          <label>Data de hoje:</label>
-          <div>{today}</div>
+    <main>
+      <ThemeToggle />
+      {Number(mood) === 10 && <Confetti />}
+      <h1>Humor do Dia</h1>
+      <nav className="nav"><a href="/">board</a><a href="/stats">stats</a><a href="/admin">admin</a></nav>
+
+      <form className="pixel-card mood-form" onSubmit={save}>
+        <div className="mood-hero">
+          <div className="mood-hero__emoji" aria-hidden="true">{emoji || '🎲'}</div>
+          <div className="mood-hero__word">{MOOD_WORDS[mood]} · {mood}/10</div>
         </div>
-        <div className={styles.box}>
-          <label>Seu nome:</label>
-          <input
-            type="text"
-            value={name}
-            onChange={e => setName(e.target.value)}
-            placeholder="Digite seu nome"
-          />
-          {isSpecial && gif && (
-            <div className={styles.specialMessage} style={{ marginTop: 8 }}>
-              <img
-                src={gif}
-                alt="Celebrando"
-                style={{ width: "100%", height: "100%", objectFit: "cover", borderRadius: 8 }}
-              />
-            </div>
-          )}
-        {showHearts && (
-          <div style={{ marginTop: 8 }}>
-            <div style={{ fontSize: "2rem" }}>
-              {'❤️ '.repeat(5)}
-            </div>
-            {husbandGif && (
-              <img
-                src={husbandGif}
-                alt="Husband Special"
-                style={{ maxWidth: "200px", width: "100%", height: "auto", objectFit: "cover", borderRadius: 8, marginTop: 8 }}
-              />
-            )}
+
+        <label htmlFor="name-input">Seu nome</label>
+        <input
+          id="name-input"
+          className="pixel-input"
+          placeholder="Digite seu nome"
+          value={name}
+          onChange={e => { setName(e.target.value); setSaved(false); }}
+        />
+
+        <p className="mood-label">Como está seu humor hoje?</p>
+        <div className="mood-grid" role="group" aria-label="Escolha seu humor de 1 a 10">
+          {Array.from({ length: 10 }, (_, i) => i + 1).map(n => (
+            <button
+              key={n}
+              type="button"
+              className={`mood-btn mood-btn--${n <= 3 ? 'low' : n <= 6 ? 'mid' : 'high'}${mood === n ? ' is-selected' : ''}`}
+              aria-pressed={mood === n}
+              onClick={() => selectMood(n)}
+            >
+              {n}
+            </button>
+          ))}
+        </div>
+
+        <label htmlFor="note-input">Observação (opcional)</label>
+        <input
+          id="note-input"
+          className="pixel-input"
+          value={note}
+          onChange={e => setNote(e.target.value)}
+        />
+
+        <div className="mood-actions">
+          <button className="pixel-btn pixel-btn--pink" type="submit">Salvar</button>
+          {saved && <span className="saved-msg" role="status">salvo! ✓</span>}
+        </div>
+
+        {error && <p role="alert" className="tag" style={{ background: 'var(--pink)' }}>{error}</p>}
+        {saved && me?.gifUrl && <img className="reward-gif" src={me.gifUrl} alt="" />}
+        {saved && me?.isSweetheart && <div className="hearts">{'❤️ '.repeat(5)}</div>}
+      </form>
+
+      <div className="pixel-card">
+        <h3>Board de hoje</h3>
+        {board.length === 0 ? (
+          <p className="muted">ninguém registrou o humor ainda… seja o primeiro 👀</p>
+        ) : (
+          <div className="board-grid">
+            {board.map(b => (
+              <div key={b.person} className="board-card">
+                <div className="board-card__emoji">{b.emoji}</div>
+                <div className="board-card__name">{b.displayName}</div>
+                <span className="tag">{b.mood}/10</span>
+              </div>
+            ))}
           </div>
         )}
-        </div>
-        <div className={styles.box}>
-          <label>Como está seu humor hoje?:</label>
-          <input
-            type="number"
-            min={1}
-            max={10}
-            value={note}
-            onChange={handleNoteChange}
-          />
-          <div style={{ fontSize: "2rem" }}>{emoji}</div>
-        </div>
-        <ResultsBox
-          today={today}
-          name={name}
-          note={note}
-          desc={desc}
-          setNote={setNote}
-          setDesc={setDesc}
-          emoji={emoji}
-        />
-      </main>
-    </div>
+      </div>
+    </main>
   );
 }

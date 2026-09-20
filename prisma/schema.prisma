@@ -1,0 +1,34 @@
+generator client {
+  provider      = "prisma-client-js"
+  binaryTargets = ["native", "linux-musl-openssl-3.0.x"]
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Person {
+  id           Int         @id @default(autoincrement())
+  name         String      @unique
+  displayName  String
+  isActive     Boolean     @default(true)
+  isSweetheart Boolean     @default(false)
+  gifUrl       String?
+  createdAt    DateTime    @default(now())
+  entries      MoodEntry[]
+}
+
+model MoodEntry {
+  id        Int      @id @default(autoincrement())
+  person    Person   @relation(fields: [personId], references: [id], onDelete: Cascade)
+  personId  Int
+  date      DateTime @db.Date
+  mood      Int
+  note      String?
+  emoji     String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([personId, date])
+}
