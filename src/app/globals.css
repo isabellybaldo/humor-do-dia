@@ -24,4 +24,30 @@ a{color:var(--text)}
 .tag{font-family:var(--font-pixel);font-size:8px;color:var(--on-accent);background:var(--lavender);border:2px solid var(--border);padding:4px 6px;margin-right:4px;display:inline-block}
 .theme-toggle{position:fixed;top:12px;right:12px;z-index:10;font-size:9px}
 .nav a{margin-right:12px;font-family:var(--font-pixel);font-size:9px}
-a:focus-visible,.pixel-btn:focus-visible,.pixel-input:focus-visible{outline:3px solid var(--lavender);outline-offset:3px}
+a:focus-visible,.pixel-btn:focus-visible,.pixel-input:focus-visible,.mood-btn:focus-visible{outline:3px solid var(--lavender);outline-offset:3px}
+.muted{color:var(--text-soft)}
+
+/* ---- Mood form / hero ---- */
+.mood-form label{font-family:var(--font-pixel);font-size:9px;display:block;margin:16px 0 6px}
+.mood-hero{text-align:center;padding:8px 0 4px}
+.mood-hero__emoji{font-size:76px;line-height:1;filter:drop-shadow(3px 3px 0 var(--shadow))}
+.mood-hero__word{font-family:var(--font-pixel);font-size:10px;color:var(--text-soft);margin-top:12px}
+.mood-label{font-family:var(--font-pixel);font-size:9px;margin:16px 0 8px}
+.mood-grid{display:grid;grid-template-columns:repeat(5,1fr);gap:8px}
+@media (min-width:520px){.mood-grid{grid-template-columns:repeat(10,1fr)}}
+.mood-btn{font-family:var(--font-pixel);font-size:11px;color:var(--text);background:var(--card);border:3px solid var(--border);box-shadow:3px 3px 0 0 var(--shadow);padding:12px 0;cursor:pointer;transition:transform 60ms steps(2),box-shadow 60ms steps(2)}
+.mood-btn:hover{transform:translate(1px,1px)}
+.mood-btn.is-selected{color:var(--on-accent);transform:translate(2px,2px);box-shadow:1px 1px 0 0 var(--shadow)}
+.mood-btn--low.is-selected{background:var(--pink)}
+.mood-btn--mid.is-selected{background:var(--lavender)}
+.mood-btn--high.is-selected{background:var(--mint)}
+.mood-actions{display:flex;align-items:center;gap:10px;margin-top:16px}
+.saved-msg{font-family:var(--font-pixel);font-size:9px;color:var(--on-accent);background:var(--mint);border:3px solid var(--border);padding:6px 8px}
+.reward-gif{display:block;max-width:220px;width:100%;margin-top:14px;border:var(--step) solid var(--border)}
+.hearts{font-size:1.6rem;margin-top:8px}
+
+/* ---- Board grid ---- */
+.board-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:12px}
+.board-card{border:3px solid var(--border);background:var(--bg);box-shadow:3px 3px 0 0 var(--shadow);padding:12px;text-align:center}
+.board-card__emoji{font-size:34px;line-height:1}
+.board-card__name{font-family:var(--font-pixel);font-size:8px;margin:8px 0 8px;word-break:break-word}

@@ -2,6 +2,7 @@
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { prisma } from '@/lib/db';
 import { POST, GET } from './route';
+import { emojiMap } from '@/app/appData.js';
 
 beforeAll(async () => {
   await prisma.person.upsert({
@@ -41,5 +42,16 @@ describe('/api/entries', () => {
     await POST(req({ name: 'ana', mood: 9 }));
     const board2 = await (await GET()).json();
     expect(board2.find((e: any) => e.person === 'ana').mood).toBe(9);
+  });
+  it('stores the exact chosen emoji when it belongs to the mood (WYSIWYG)', async () => {
+    const chosen = emojiMap[6][0];
+    await POST(req({ name: 'ana', mood: 6, emoji: chosen }));
+    const board = await (await GET()).json();
+    expect(board.find((e: any) => e.person === 'ana').emoji).toBe(chosen);
+  });
+  it('falls back to a level emoji when the chosen one is invalid', async () => {
+    await POST(req({ name: 'ana', mood: 2, emoji: '🚀' }));
+    const board = await (await GET()).json();
+    expect(emojiMap[2]).toContain(board.find((e: any) => e.person === 'ana').emoji);
   });
 });

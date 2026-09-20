@@ -1,7 +1,7 @@
 import { NextResponse } from 'next/server';
 import { prisma } from '@/lib/db';
 import { getActivePersonByName } from '@/lib/roster';
-import { pickEmoji } from '@/lib/emoji';
+import { resolveEmoji } from '@/lib/emoji';
 import { todayInSaoPaulo } from '@/lib/time';
 
 export async function POST(request: Request) {
@@ -19,7 +19,8 @@ export async function POST(request: Request) {
   }
 
   const date = todayInSaoPaulo();
-  const emoji = pickEmoji(mood);
+  const candidate = typeof body?.emoji === 'string' ? body.emoji : undefined;
+  const emoji = resolveEmoji(mood, candidate);
   await prisma.moodEntry.upsert({
     where: { personId_date: { personId: person.id, date } },
     update: { mood, note, emoji },

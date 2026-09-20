@@ -3,22 +3,26 @@ import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { prisma } from '@/lib/db';
 import { GET } from './route';
 
+// Unique person name so this file doesn't collide with entries/route.test.ts,
+// which also seeds/cleans a person and runs in parallel against the same DB.
+const PERSON = 'statsperson';
+
 beforeAll(async () => {
-  const ana = await prisma.person.upsert({
-    where: { name: 'ana' }, update: { isActive: true },
-    create: { name: 'ana', displayName: 'Ana' },
+  const p = await prisma.person.upsert({
+    where: { name: PERSON }, update: { isActive: true },
+    create: { name: PERSON, displayName: 'Stats Person' },
   });
   await prisma.moodEntry.createMany({
     data: [
-      { personId: ana.id, date: new Date('2026-01-01T00:00:00Z'), mood: 4, emoji: '😕' },
-      { personId: ana.id, date: new Date('2026-01-02T00:00:00Z'), mood: 8, emoji: '😎' },
+      { personId: p.id, date: new Date('2026-01-01T00:00:00Z'), mood: 4, emoji: '😕' },
+      { personId: p.id, date: new Date('2026-01-02T00:00:00Z'), mood: 8, emoji: '😎' },
     ],
     skipDuplicates: true,
   });
 });
 afterAll(async () => {
-  await prisma.moodEntry.deleteMany({ where: { person: { name: 'ana' } } });
-  await prisma.person.deleteMany({ where: { name: 'ana' } });
+  await prisma.moodEntry.deleteMany({ where: { person: { name: PERSON } } });
+  await prisma.person.deleteMany({ where: { name: PERSON } });
 });
 
 describe('/api/stats', () => {
@@ -28,6 +32,6 @@ describe('/api/stats', () => {
     expect(data).toHaveProperty('teamVibe');
     expect(data).toHaveProperty('perPerson');
     expect(data).toHaveProperty('distribution');
-    expect(data.moodOverTime.ana.length).toBeGreaterThanOrEqual(2);
+    expect(data.moodOverTime[PERSON].length).toBeGreaterThanOrEqual(2);
   });
 });
