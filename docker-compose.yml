@@ -1,0 +1,57 @@
+services:
+  humor-web:
+    build: .
+    container_name: ${APP_NAME:-humor-do-dia}
+    restart: unless-stopped
+    env_file: .env
+    environment:
+      - DATABASE_URL=postgresql://humor:${DB_PASSWORD}@humor-db:5432/humor?schema=public
+    depends_on:
+      humor-db:
+        condition: service_healthy
+    networks:
+      - traefik_public
+      - humor_internal
+    labels:
+      - "traefik.enable=true"
+      - "traefik.docker.network=traefik_public"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.entrypoints=websecure"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.tls=true"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.tls.certresolver=letsencrypt"
+      - "traefik.http.services.${APP_NAME:-humor-do-dia}.loadbalancer.server.port=3000"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.middlewares=humor-ratelimit"
+      - "traefik.http.middlewares.humor-ratelimit.ratelimit.average=60"
+      - "traefik.http.middlewares.humor-ratelimit.ratelimit.burst=30"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}-http.entrypoints=web"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}-http.middlewares=humor-https"
+      - "traefik.http.middlewares.humor-https.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.humor-https.redirectscheme.permanent=true"
+
+  humor-db:
+    image: postgres:16
+    container_name: ${APP_NAME:-humor-do-dia}-db
+    restart: unless-stopped
+    environment:
+      POSTGRES_USER: humor
+      POSTGRES_PASSWORD: ${DB_PASSWORD}
+      POSTGRES_DB: humor
+    volumes:
+      - humor_pgdata:/var/lib/postgresql/data
+    networks:
+      - humor_internal
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U humor -d humor"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  humor_pgdata:
+
+networks:
+  traefik_public:
+    external: true
+  humor_internal:
+    internal: true

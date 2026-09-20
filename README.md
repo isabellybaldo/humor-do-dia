@@ -34,6 +34,12 @@ You can customize these arrays and GIF URLs in `src/app/appData.js`.
 
 Edit `src/app/appData.js` to add or change coworkers, husband names, and their GIFs.
 
+## Deploy (VPS, Traefik)
+DNS: `humor.isoca.space` A → VPS IP. On the VPS:
+`git clone` this repo under /home/isoca/projects, `cp .env.example .env` and fill
+`DB_PASSWORD`, `ADMIN_USERNAME`, `ADMIN_PASSWORD_HASH`, `SESSION_SECRET`, then
+`docker compose up -d --build`. Migrations + seed run automatically on start.
+
 ## License
 
 MIT
