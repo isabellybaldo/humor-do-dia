@@ -1,0 +1,26 @@
+version: '3.8'
+
+services:
+  humor-do-dia:
+    build: .
+    container_name: ${APP_NAME:-humor-do-dia}
+    restart: unless-stopped
+    networks:
+      - traefik_public
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.entrypoints=websecure"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.tls=true"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}.tls.certresolver=letsencrypt"
+      - "traefik.http.services.${APP_NAME:-humor-do-dia}.loadbalancer.server.port=${INTERNAL_PORT:-3000}"
+      # HTTP -> HTTPS redirect
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}-http.rule=Host(`${DOMAIN}`)"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}-http.entrypoints=web"
+      - "traefik.http.routers.${APP_NAME:-humor-do-dia}-http.middlewares=https-redirect"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.scheme=https"
+      - "traefik.http.middlewares.https-redirect.redirectscheme.permanent=true"
+
+networks:
+  traefik_public:
+    external: true
